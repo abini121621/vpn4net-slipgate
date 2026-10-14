@@ -1,6 +1,6 @@
 #!/bin/bash
-# ƔƤƝ⇃4↾ƝЄƬ installer — download binary and run `slipgate install`
-set -e
+# xօ թαթí installer — download the matching release binary and run `xopapi install`
+set -euo pipefail
 
 REPO="abini121621/vpn4net-slipgate"
 INSTALL_DIR="/usr/local/bin"
@@ -26,12 +26,12 @@ case "$ARCH" in
 esac
 
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
-[[ "$OS" != "linux" ]] && error "ƔƤƝ⇃4↾ƝЄƬ only supports Linux"
+[[ "$OS" != "linux" ]] && error "SlipGate only supports Linux"
 
-BINARY="slipgate-${OS}-${ARCH}"
+BINARY="xopapi-${OS}-${ARCH}"
 
-# Override with: SLIPGATE_RELEASE_TAG=v1.5.1 bash install.sh
-RELEASE_TAG="${SLIPGATE_RELEASE_TAG:-}"
+# Override with: XOPAPI_RELEASE_TAG=v1.0.0 bash install.sh
+RELEASE_TAG="${XOPAPI_RELEASE_TAG:-${SLIPGATE_RELEASE_TAG:-}}"
 CHANNEL=""  # ← set to "dev" on dev branch, empty on main
 
 if [[ -n "$RELEASE_TAG" ]]; then
@@ -52,33 +52,35 @@ else
 fi
 
 echo -e "${CYAN}"
-echo "  ╔══════════════════════════════════════╗"
-echo "  ║               ƔƤƝ⇃4↾ƝЄƬ               ║"
-echo "  ║          Secure Tunnel Manager        ║"
-echo "  ║            Telegram: @vpnfornet       ║"
-echo "  ╚══════════════════════════════════════╝"
+echo " __  __       _        _                 "
+echo " \\ \\/ /  ___ | |_ __ _| |__   ___        "
+echo "  \\  /  / _ \\| __/ _  | '_ \\ / _ \\     "
+echo "  /  \\ | (_) | || (_| | |_) |  __/       "
+echo " /_/\\_\\ \\___/ \\__\\__,_|_.__/ \\___|       "
+echo "             xօ թαթí                    "
 echo -e "${NC}"
 
-# Kill any running slipgate/tunnel processes and remove old binary
-killall slipgate 2>/dev/null || true
+# Stop only the previous xopapi process; existing SlipGate services remain
+# untouched until the operator explicitly migrates them.
+killall xopapi 2>/dev/null || true
 killall dnstt-server 2>/dev/null || true
 killall slipstream-server 2>/dev/null || true
-rm -f "${INSTALL_DIR}/slipgate"
 
-info "Downloading ƔƤƝ⇃4↾ƝЄƬ ($OS/$ARCH)..."
+info "Downloading xopapi ($OS/$ARCH)..."
 if command -v curl &>/dev/null; then
-    curl -fsSL "$URL" -o "${INSTALL_DIR}/slipgate"
+    curl -fsSL "$URL" -o "${INSTALL_DIR}/xopapi"
 elif command -v wget &>/dev/null; then
-    wget -qO "${INSTALL_DIR}/slipgate" "$URL"
+    wget -qO "${INSTALL_DIR}/xopapi" "$URL"
 else
     error "Neither curl nor wget found"
 fi
 
-chmod +x "${INSTALL_DIR}/slipgate"
+chmod +x "${INSTALL_DIR}/xopapi"
+ln -sfn xopapi "${INSTALL_DIR}/slipgate"
 
-info "Running slipgate install..."
-if ! "${INSTALL_DIR}/slipgate" install </dev/tty; then
-    error "slipgate install failed — run 'sudo slipgate install' to retry"
+info "Running xopapi install..."
+if ! "${INSTALL_DIR}/xopapi" install </dev/tty; then
+    error "xopapi install failed — run 'sudo xopapi install' to retry"
 fi
 
-info "Done! Run 'sudo slipgate' to see the ƔƤƝ⇃4↾ƝЄƬ menu."
+info "Done! Run 'sudo xopapi' to see the menu."
