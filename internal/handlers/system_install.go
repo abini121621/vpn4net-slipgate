@@ -12,11 +12,11 @@ import (
 	"github.com/anonvector/slipgate/internal/actions"
 	"github.com/anonvector/slipgate/internal/binary"
 	"github.com/anonvector/slipgate/internal/certs"
-	"github.com/anonvector/slipgate/internal/clientcfg"
 	"github.com/anonvector/slipgate/internal/config"
 	"github.com/anonvector/slipgate/internal/dnsrouter"
 	"github.com/anonvector/slipgate/internal/keys"
 	"github.com/anonvector/slipgate/internal/network"
+	"github.com/anonvector/slipgate/internal/profile"
 	"github.com/anonvector/slipgate/internal/prompt"
 	"github.com/anonvector/slipgate/internal/proxy"
 	"github.com/anonvector/slipgate/internal/system"
@@ -28,7 +28,7 @@ func handleSystemInstall(ctx *actions.Context) error {
 	out := ctx.Output
 
 	if runtime.GOOS != "linux" {
-		return actions.NewError(actions.SystemInstall, "slipgate only supports Linux servers", nil)
+		return actions.NewError(actions.SystemInstall, "xopapi only supports Linux servers", nil)
 	}
 
 	// Offline mode: use local binaries instead of downloading
@@ -336,7 +336,7 @@ func handleSystemInstall(ctx *actions.Context) error {
 			}
 		}
 
-			for bIdx, b := range backends {
+		for bIdx, b := range backends {
 			// NaiveProxy is a single Caddy forward-proxy — one instance on :443
 			// serves both SOCKS and SSH clients (client picks via CONNECT target).
 			// Creating a second tunnel would EADDRINUSE-loop both services.
@@ -751,8 +751,9 @@ func handleSystemInstall(ctx *actions.Context) error {
 	}
 	out.Print("")
 
-	// Show slipnet:// configs
-	out.Print("    Client Configs:")
+	// Show v4.0.0 v28 vpnfornet://secure/ drafts. These are intentionally
+	// unlocked drafts; the trusted Admin app must lock them before .v4n sharing.
+	out.Print("    v4.0.0 Client Profile Drafts:")
 	out.Print("")
 	users := cfg.Users
 	if len(users) == 0 {
@@ -761,43 +762,27 @@ func handleSystemInstall(ctx *actions.Context) error {
 	}
 	for _, u := range users {
 		for _, t := range allTunnels {
-			for _, v := range naiveAwareVariants(&t) {
-				backendCfg := cfg.GetBackend(v.backend)
-				if backendCfg == nil {
-					continue
-				}
-				variantTunnel := t
-				variantTunnel.Backend = v.backend
-				variantTunnel.Tag = v.tag
-
-				modes := []string{""}
-				if t.Transport == config.TransportDNSTT {
-					modes = []string{clientcfg.ClientModeDNSTT, clientcfg.ClientModeNoizDNS}
-				}
-
-				for _, mode := range modes {
-					opts := clientcfg.URIOptions{
-						ClientMode: mode,
-						Username:   u.Username,
-						Password:   u.Password,
-					}
-					uri, err := clientcfg.GenerateURI(&variantTunnel, backendCfg, cfg, opts)
-					if err != nil {
-						continue
-					}
-					label := variantTunnel.Tag
-					if mode == clientcfg.ClientModeNoizDNS {
-						label = strings.ReplaceAll(label, "dnstt", "noizdns")
-					}
-					if u.Username != "" {
-						out.Print(fmt.Sprintf("    [%s] %s", label, u.Username))
-					} else {
-						out.Print(fmt.Sprintf("    [%s] (no auth)", label))
-					}
-					out.Print(fmt.Sprintf("    %s", uri))
-					out.Print("")
-				}
+			variant := t
+			if t.Transport == config.TransportNaive {
+				variant.Backend = config.BackendSOCKS
 			}
+			uri, err := profile.DraftFromTunnel(variant, profile.DraftInput{
+				Name: variant.Tag, Domain: variant.Domain,
+				Username: u.Username, Password: u.Password,
+				SSHHost: variant.Domain, SSHPort: 22,
+			})
+			if err != nil {
+				out.Warning(fmt.Sprintf("Could not create v28 draft for %s: %v", variant.Tag, err))
+				continue
+			}
+			label := variant.Tag
+			if u.Username != "" {
+				out.Print(fmt.Sprintf("    [%s] %s", label, u.Username))
+			} else {
+				out.Print(fmt.Sprintf("    [%s] (no auth)", label))
+			}
+			out.Print(fmt.Sprintf("    %s", uri))
+			out.Print("")
 		}
 	}
 
@@ -805,9 +790,9 @@ func handleSystemInstall(ctx *actions.Context) error {
 	out.Print("")
 	out.Print("  Next steps:")
 	out.Print("    - Set up DNS records above with your domain registrar")
-	out.Print("    - Import the slipnet:// config into the SlipNet app")
-	out.Print("    - Add more tunnels: sudo slipgate tunnel add")
-	out.Print("    - Add more users:   sudo slipgate users")
+	out.Print("    - Lock this draft in the Admin app before sharing as a .v4n file")
+	out.Print("    - Add more tunnels: sudo xopapi tunnel add")
+	out.Print("    - Add more users:   sudo xopapi users")
 	out.Print("")
 
 	return nil

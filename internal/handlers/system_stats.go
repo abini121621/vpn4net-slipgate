@@ -181,19 +181,19 @@ func appendCapped(s []float64, v float64) []float64 {
 
 // 256-color palette
 const (
-	cHeader   = "\033[38;5;75m"  // steel blue
-	cDim      = "\033[38;5;242m" // gray
-	cLabel    = "\033[38;5;255m" // bright white
-	cCPU      = "\033[38;5;81m"  // sky blue
-	cRAM      = "\033[38;5;177m" // lavender
-	cRX       = "\033[38;5;114m" // soft green
-	cTX       = "\033[38;5;222m" // warm yellow
-	cOK       = "\033[38;5;78m"  // green
-	cFail     = "\033[38;5;203m" // soft red
-	cWarn     = "\033[38;5;214m" // orange
-	cDivider  = "\033[38;5;238m" // dark gray
-	cReset    = "\033[0m"
-	cBold     = "\033[1m"
+	cHeader  = "\033[38;5;75m"  // steel blue
+	cDim     = "\033[38;5;242m" // gray
+	cLabel   = "\033[38;5;255m" // bright white
+	cCPU     = "\033[38;5;81m"  // sky blue
+	cRAM     = "\033[38;5;177m" // lavender
+	cRX      = "\033[38;5;114m" // soft green
+	cTX      = "\033[38;5;222m" // warm yellow
+	cOK      = "\033[38;5;78m"  // green
+	cFail    = "\033[38;5;203m" // soft red
+	cWarn    = "\033[38;5;214m" // orange
+	cDivider = "\033[38;5;238m" // dark gray
+	cReset   = "\033[0m"
+	cBold    = "\033[1m"
 )
 
 func drawDashboard(cpuH, ramH, rxH, txH []float64,
@@ -206,7 +206,7 @@ func drawDashboard(cpuH, ramH, rxH, txH []float64,
 	// Header
 	now := time.Now().Format("2006-01-02 15:04:05")
 	b.WriteString("\r\n")
-	b.WriteString(fmt.Sprintf("  %s%sSlipGate%s  %s%s%s    %s%s%s\r\n",
+	b.WriteString(fmt.Sprintf("  %s%sxօ թαթí%s  %s%s%s    %s%s%s\r\n",
 		cHeader, cBold, cReset, cDim, version.String(), cReset, cDim, now, cReset))
 	b.WriteString(fmt.Sprintf("  %s────────────────────────────────────────────────────────────%s\r\n\r\n",
 		cDivider, cReset))
@@ -297,14 +297,13 @@ func drawDashboard(cpuH, ramH, rxH, txH []float64,
 func gaugeColor256(pct float64) string {
 	switch {
 	case pct >= 85:
-		return cBold + cFail  // bold soft red
+		return cBold + cFail // bold soft red
 	case pct >= 60:
-		return cBold + cWarn  // bold orange
+		return cBold + cWarn // bold orange
 	default:
-		return cBold + cOK    // bold green
+		return cBold + cOK // bold green
 	}
 }
-
 
 // histMax returns the maximum value in a history slice.
 func histMax(data []float64) float64 {
