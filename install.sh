@@ -52,12 +52,13 @@ else
 fi
 
 echo -e "${CYAN}"
-echo " __  __       _        _                 "
-echo " \\ \\/ /  ___ | |_ __ _| |__   ___        "
-echo "  \\  /  / _ \\| __/ _  | '_ \\ / _ \\     "
-echo "  /  \\ | (_) | || (_| | |_) |  __/       "
-echo " /_/\\_\\ \\___/ \\__\\__,_|_.__/ \\___|       "
-echo "             xօ թαթí                    "
+echo "+==============================================================+"
+echo "|                         X O   P A P I                        |"
+echo "|                      VPS INSTALLER                           |"
+echo "|--------------------------------------------------------------|"
+echo "|       Secure tunnels  |  v4.0 profiles  |  live ops          |"
+echo "|                          xօ թαթí                              |"
+echo "+==============================================================+"
 echo -e "${NC}"
 
 # Stop only the previous xopapi process; existing SlipGate services remain

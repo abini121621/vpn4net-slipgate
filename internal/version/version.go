@@ -14,9 +14,9 @@ func String() string {
 		tag = "-dev"
 	}
 	if Commit == "unknown" {
-		return fmt.Sprintf("xօ թαթí v%s%s", Version, tag)
+		return fmt.Sprintf("XO PAPI (xօ թαթí) v%s%s", Version, tag)
 	}
-	return fmt.Sprintf("xօ թαթí v%s%s (%s)", Version, tag, Commit)
+	return fmt.Sprintf("XO PAPI (xօ թαթí) v%s%s (%s)", Version, tag, Commit)
 }
 
 // IsDev returns true if this is a dev channel build.
