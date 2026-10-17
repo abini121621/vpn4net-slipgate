@@ -23,7 +23,7 @@ func handleSystemUpdate(ctx *actions.Context) error {
 	out.Info("Current version: " + version.String())
 
 	base := binary.DownloadBase()
-	downloadURL := fmt.Sprintf("%s/slipgate-%s-%s", base, runtime.GOOS, runtime.GOARCH)
+	downloadURL := fmt.Sprintf("%s/xopapi-%s-%s", base, runtime.GOOS, runtime.GOARCH)
 	out.Info("Downloading from: " + downloadURL)
 
 	tmpPath, err := binary.Download(downloadURL)
@@ -50,7 +50,7 @@ func handleSystemUpdate(ctx *actions.Context) error {
 		os.Chmod(execPath, 0755)
 	}
 
-	out.Success("slipgate updated")
+	out.Success("xopapi updated")
 
 	// Hand off to the newly installed binary for transport updates and
 	// service regeneration so the new code's URLs and logic are used.

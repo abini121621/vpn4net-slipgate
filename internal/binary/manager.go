@@ -18,7 +18,7 @@ import (
 
 var httpClient = &http.Client{Timeout: 120 * time.Second}
 
-const releaseBaseURL = "https://github.com/anonvector/slipgate/releases"
+const releaseBaseURL = "https://github.com/abini121621/vpn4net-slipgate/releases"
 
 // OfflineDir, when set, makes EnsureInstalled copy binaries from this
 // directory instead of downloading. Used for SCP/offline installs.
@@ -26,10 +26,10 @@ var OfflineDir string
 
 const (
 	stableDownloadBase = releaseBaseURL + "/latest/download"
-	repoAPI            = "https://api.github.com/repos/anonvector/slipgate/releases"
+	repoAPI            = "https://api.github.com/repos/abini121621/vpn4net-slipgate/releases"
 )
 
-// DownloadBase returns the base URL for slipgate binary downloads.
+// DownloadBase returns the base URL for xopapi binary downloads.
 // Dev builds prefer the latest dev release; if none exists, fall back
 // to the latest stable release. Production builds always use stable.
 func DownloadBase() string {
@@ -174,7 +174,7 @@ func CheckUpdate() (newVersion string, downloadURL string, err error) {
 	}
 
 	// Find matching asset
-	target := fmt.Sprintf("slipgate-%s-%s", runtime.GOOS, runtime.GOARCH)
+	target := fmt.Sprintf("xopapi-%s-%s", runtime.GOOS, runtime.GOARCH)
 	for _, asset := range release.Assets {
 		if strings.Contains(asset.Name, target) {
 			return release.TagName, asset.BrowserDownloadURL, nil
